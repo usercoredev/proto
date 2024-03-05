@@ -1,0 +1,438 @@
+syntax = "proto3";
+package v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/usercoredev/proto";
+
+service AuthenticationService {
+  rpc SignUp(SignUpRequest) returns (AuthenticationResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/sign-up"
+      body: "*"
+    };
+  }
+  rpc SignIn(SignInRequest) returns (AuthenticationResponse){
+    option (google.api.http) = {
+      post: "/v1/auth/sign-in"
+      body: "*"
+    };
+  };
+  rpc RefreshToken(RefreshTokenRequest) returns (AuthenticationResponse){
+    option (google.api.http) = {
+      post: "/v1/auth/refresh-token"
+      body: "*"
+    };
+  };
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse){
+    option (google.api.http) = {
+      post: "/v1/auth/reset-password"
+      body: "*"
+    };
+  };
+  rpc ResetPasswordConfirm(ResetPasswordConfirmRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      post: "/v1/auth/reset-password-confirm"
+      body: "*"
+    };
+  };
+}
+
+service UserService {
+  rpc VerifyToken(VerifyTokenRequest) returns (AuthenticationResponse){
+    option (google.api.http) = {
+      post: "/v1/user/verify-token"
+      body: "*"
+    };
+  };
+  rpc GetUser(GetUserRequest) returns (GetUserResponse){
+    option (google.api.http) = {
+      get: "/v1/user"
+    };
+  };
+  rpc GetUserProfile(GetUserProfileRequest) returns (GetUserProfileResponse){
+    option (google.api.http) = {
+      get: "/v1/user/profile"
+    };
+  };
+  rpc UpdateUser(UpdateUserRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      put: "/v1/user"
+      body: "*"
+    };
+  };
+  rpc DeleteUser(DeleteUserRequest) returns (DefaultResponse);
+  rpc SendVerificationCode(SendVerificationCodeRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      post: "/v1/user/send-verification-code"
+      body: "*"
+    };
+  };
+  rpc Verify(VerifyRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      post: "/v1/user/verify"
+      body: "*"
+    };
+  };
+  rpc ChangePassword(ChangePasswordRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      post: "/v1/user/change-password"
+      body: "*"
+    };
+  };
+  rpc ChangeEmail(ChangeEmailRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      post: "/v1/user/change-email"
+      body: "*"
+    };
+  };
+
+  // Admin
+  rpc GetUsers(ListRequest) returns (GetUsersResponse);
+}
+
+service SessionService {
+  rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse){
+    option (google.api.http) = {
+      get: "/v1/session"
+    };
+  };
+  rpc DeleteSession(DeleteSessionRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      delete: "/v1/session/{id}"
+    };
+  };
+  rpc SignOut(SignOutRequest) returns (DefaultResponse){
+    option (google.api.http) = {
+      post: "/v1/session/sign-out"
+      body: "*"
+    };
+  };
+}
+
+service RoleService {
+  rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+}
+
+service PermissionService {
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+  rpc GetPermission(GetPermissionRequest) returns (GetPermissionResponse);
+  rpc CreatePermission(CreatePermissionRequest) returns (DefaultResponse);
+  rpc UpdatePermission(UpdatePermissionRequest) returns (DefaultResponse);
+  rpc DeletePermission(DeletePermissionRequest) returns (DefaultResponse);
+}
+
+
+message ListRequest {
+    int32 page = 1;
+    int32 pageSize = 2;
+    string search = 3;
+    string orderBy = 4;
+    string order = 5;
+}
+
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+}
+
+message SignInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SignOutRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message ResetPasswordRequest {
+  string email = 1;
+}
+
+message ResetPasswordConfirmRequest {
+  string email = 1;
+  string token = 2;
+  string password = 3;
+}
+
+message GetUserRequest {}
+
+message GetUserProfileRequest {}
+
+message UpdateUserRequest {
+  optional string name = 1;
+  Profile profile = 2;
+}
+
+message DeleteUserRequest {}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 per_page = 2;
+}
+
+message SendVerificationCodeRequest {
+  VerificationType type = 1;
+}
+
+message VerifyRequest {
+  VerificationType type = 1;
+  string code = 2;
+}
+
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+
+message ChangeEmailRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message VerifyTokenRequest {
+  string refresh_token = 1;
+}
+
+message GetSessionsRequest {}
+
+message DeleteSessionRequest {
+  uint64 id = 1;
+}
+
+message GetRolesRequest {
+  string query = 1;
+  int32 page = 2;
+  int32 per_page = 3;
+}
+
+message GetRoleRequest {
+  string id = 1;
+}
+
+message CreateRoleRequest {
+  Role role = 1;
+}
+
+message UpdateRoleRequest {
+  Role role = 1;
+}
+message DeleteRoleRequest {
+  string id = 1;
+}
+
+message GetPermissionsRequest {}
+
+message GetPermissionRequest {
+  string access_token = 1;
+  string permission_id = 2;
+}
+
+message CreatePermissionRequest {
+  Permission permission = 1;
+}
+
+message UpdatePermissionRequest {
+  Permission permission = 1;
+}
+
+message DeletePermissionRequest {
+  string permission_id = 1;
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  optional string password = 3;
+  string name = 4;
+
+  optional string email_verification_token = 5;
+  optional string email_verification_sent_at = 6;
+  bool email_verified = 7;
+
+  repeated Session sessions = 14;
+  Profile profile = 15;
+
+  string created_at = 12;
+  string updated_at = 13;
+}
+
+message SocialProviders {
+  repeated SocialProvider social_providers = 1;
+}
+
+message PasswordResets {
+  repeated PasswordReset password_resets = 1;
+}
+
+message Session {
+  uint64 id = 1;
+  string client_id = 3;
+  string client_name = 4;
+  optional Device device = 5;
+  string expires_at = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+message Device {
+  string id = 1;
+  string user_id = 2;
+  string session_id = 3;
+  string name = 4;
+  string os = 5;
+  string os_version = 6;
+  string browser = 7;
+  string browser_version = 8;
+  string ip = 9;
+  string token = 10;
+  string created_at = 11;
+  string updated_at = 12;
+}
+
+message Profile {
+  optional string picture = 1;
+  optional string gender = 2;
+  optional string education = 3;
+  optional string locale = 4;
+  optional string timezone = 5;
+  optional string birthdate = 6;
+}
+
+message PasswordReset {
+  string id = 1;
+  string user_id = 2;
+  string token = 3;
+  string expires_at = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+message SocialProvider {
+  string id = 1;
+  string user_id = 2;
+  string provider = 3;
+  string provider_user_id = 4;
+  string provider_user_access_token = 5;
+  string provider_user_refresh_token = 6;
+  string provider_user_expires_at = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+enum VerificationType {
+  EMAIL = 0;
+  PHONE = 1;
+}
+
+message Role {
+  string id = 1;
+  string name = 2;
+  string key = 3;
+  string description = 4;
+  repeated Permission permissions = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message Permission {
+  string id = 1;
+  string name = 2;
+  string key = 3;
+  string description = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+message Meta {
+  int32 totalCount = 1;
+  int32 totalPages = 2;
+  int32 pageSize = 3;
+  int32 page = 4;
+  bool hasNext = 5;
+  bool hasPrev = 6;
+  string orderBy = 7;
+  string order = 8;
+}
+
+extend google.protobuf.MethodOptions {
+  bool authorization_required = 50001;
+}
+
+message DefaultResponse {
+  bool success = 1;
+  optional string message = 2;
+}
+
+message AuthenticationResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_in = 3;
+}
+
+message ResetPasswordResponse {
+  string email = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message GetUserProfileResponse {
+  Profile profile = 1;
+}
+
+message ListUsersResponse {
+  repeated User users = 1;
+  int32 page = 2;
+  int32 per_page = 3;
+  int32 total = 4;
+}
+
+message GetSessionsResponse {
+  repeated Session sessions = 1;
+}
+
+message GetRolesResponse {
+  repeated Role roles = 1;
+  int32 total = 2;
+}
+
+message GetRoleResponse {
+  Role role = 1;
+}
+
+message CreateRoleResponse {
+  Role role = 1;
+}
+
+message UpdateRoleResponse {
+  Role role = 1;
+}
+
+message DeleteRoleResponse {
+  string id = 1;
+}
+
+message GetPermissionsResponse {
+  repeated Permission permissions = 1;
+}
+
+message GetPermissionResponse {
+  Permission permission = 1;
+}
+
+message GetUsersResponse {
+  repeated User users = 1;
+  Meta meta = 2;
+}
